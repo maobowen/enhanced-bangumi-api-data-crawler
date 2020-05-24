@@ -1,0 +1,29 @@
+language: python
+jobs:
+  include:
+    - name: "Python 3.8 on Ubuntu 20.04"
+      os: linux
+      dist: focal
+      python: 3.8
+    - name: "Python 3.8 on macOS 10.15"
+      os: osx
+      osx_image: xcode11.4
+      language: shell
+      before_install:
+        - pyenv install $PYENV_VERSION
+        - pyenv global $PYENV_VERSION
+      env: PATH=/Users/travis/.pyenv/shims:$PATH PYENV_VERSION=3.8.2
+    - name: "Python 3.8 on Windows 10"
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.8.3
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
+install:
+  - python -m pip install -U pip
+  - pip install -r requirements.txt
+  - pip install coveralls
+script:
+  - pytest
+after_success:
+  - coveralls
