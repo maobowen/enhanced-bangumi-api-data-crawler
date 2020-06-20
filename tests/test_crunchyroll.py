@@ -16,6 +16,7 @@ class TestCrunchyrollCrawler:
         """Crunchyroll test helper."""
         def _test_crunchyroll_generic(source, episodes: list, test_config: dict):
             test_config['service_id'] = 'crunchyroll.com'
+            test_config['subject_url_id'] = str(test_config['subject_url_id'])
             test_config['remark'] = '%s-Crunchyroll' % test_config['subject_name']
             del test_config['subject_name']
             test_config['episode_url_id_pattern'] = r'^(\d+)$'
@@ -29,9 +30,8 @@ class TestCrunchyrollCrawler:
     def test_crunchyroll_single_collection_all_free_wo_exclusion(self, test_crunchyroll_generic, caplog):
         """Crunchyroll with single collection, all episodes free and continuous Bangumi episode IDs."""
         subject_id = 47889  # 来自风平浪静的明天
-        subject_url_id = 'nagi-no-asukara-nagi-asu-a-lull-in-the-sea'
         args = argparse.Namespace(
-            url=self._SITE_URL_PATTERN % subject_url_id,
+            url=self._SITE_URL_PATTERN % 'nagi-no-asukara-nagi-asu-a-lull-in-the-sea',
             subject=subject_id,
             episodes=verify_episode_ids_format('322501-322526')[1],
         )
@@ -39,7 +39,7 @@ class TestCrunchyrollCrawler:
         test_config = {
             'subject_id': subject_id,
             'paid': 0,
-            'subject_url_id': subject_url_id,
+            'subject_url_id': 257179,
             'subtitle_locales': ['en_US'],
             'subject_name': 'Nagi no Asukara (Nagi-Asu: A Lull in the Sea)',
             'episodes_count': 26,
@@ -54,9 +54,8 @@ class TestCrunchyrollCrawler:
     def test_crunchyroll_single_collection_all_free_w_exclusion(self, test_crunchyroll_generic, caplog):
         """Crunchyroll with single collection, all episodes free and discontinuous Bangumi episode IDs."""
         subject_id = 207573  # 月色真美
-        subject_url_id = 'tsukigakirei'
         args = argparse.Namespace(
-            url=self._SITE_URL_PATTERN % subject_url_id,
+            url=self._SITE_URL_PATTERN % 'tsukigakirei',
             subject=subject_id,
             episodes=verify_episode_ids_format('705416-705421,719948,705422-705427')[1],
         )
@@ -64,7 +63,7 @@ class TestCrunchyrollCrawler:
         test_config = {
             'subject_id': subject_id,
             'paid': 0,
-            'subject_url_id': subject_url_id,
+            'subject_url_id': 272937,
             'subtitle_locales': ['ar_SA', 'de_DE', 'en_US', 'es_ES', 'es_MX', 'fr_FR', 'it_IT', 'pt_BR'],
             'subject_name': 'Tsukigakirei',
             'episodes_count': 13,
@@ -82,9 +81,8 @@ class TestCrunchyrollCrawler:
     def test_crunchyroll_single_collection_first_free_wo_exclusion(self, test_crunchyroll_generic, caplog):
         """Crunchyroll with single collection, only the first episode free and continuous Bangumi episode IDs."""
         subject_id = 1760  # 夏娃的时间
-        subject_url_id = 'time-of-eve'
         args = argparse.Namespace(
-            url=self._SITE_URL_PATTERN % subject_url_id,
+            url=self._SITE_URL_PATTERN % 'time-of-eve',
             subject=subject_id,
             episodes=verify_episode_ids_format('7536-7541')[1],
         )
@@ -92,7 +90,7 @@ class TestCrunchyrollCrawler:
         test_config = {
             'subject_id': subject_id,
             'paid': 1,
-            'subject_url_id': subject_url_id,
+            'subject_url_id': 87731,
             'subtitle_locales': ['de_DE', 'en_US', 'es_MX', 'it_IT', 'pt_BR'],
             'subject_name': 'Time of Eve',
             'episodes_count': 6,
@@ -105,11 +103,10 @@ class TestCrunchyrollCrawler:
         assert "Episodes mismatch" not in caplog.text
 
     def test_crunchyroll_single_collection_all_paid_wo_exclusion(self, test_crunchyroll_generic, caplog):
-        """Crunchyroll with single collection, only the first episode free and discontinuous Bangumi episode IDs."""
+        """Crunchyroll with single collection, all episodes paid and continuous Bangumi episode IDs."""
         subject_id = 7157  # 缘之空
-        subject_url_id = 'yosuga-no-sora-in-solitude-where-we-are-least-alone'
         args = argparse.Namespace(
-            url=self._SITE_URL_PATTERN % subject_url_id + '?skip_wall=1',
+            url=self._SITE_URL_PATTERN % 'yosuga-no-sora-in-solitude-where-we-are-least-alone' + '?skip_wall=1',
             subject=subject_id,
             episodes=verify_episode_ids_format('52323-52334')[1],
         )
@@ -117,7 +114,7 @@ class TestCrunchyrollCrawler:
         test_config = {
             'subject_id': subject_id,
             'paid': 2,
-            'subject_url_id': subject_url_id,
+            'subject_url_id': 267827,
             'subtitle_locales': [],
             'subject_name': 'Yosuga no Sora: In Solitude Where We are Least Alone',
             'episodes_count': 12,
@@ -132,9 +129,8 @@ class TestCrunchyrollCrawler:
     def test_crunchyroll_multiple_collections_all_free_wo_exclusion(self, test_crunchyroll_generic, caplog):
         """Crunchyroll with multiple collections, all episodes free and continuous Bangumi episode IDs."""
         subject_id = 101442  # 悠哉日常大王 第2期
-        subject_url_id = 'non-non-biyori'
         args = argparse.Namespace(
-            url=self._SITE_URL_PATTERN % subject_url_id,
+            url=self._SITE_URL_PATTERN % 'non-non-biyori',
             subject=subject_id,
             episodes=verify_episode_ids_format('538096-538107')[1],
             cr_collection=22331,
@@ -143,7 +139,7 @@ class TestCrunchyrollCrawler:
         test_config = {
             'subject_id': subject_id,
             'paid': 0,
-            'subject_url_id': subject_url_id,
+            'subject_url_id': 257295,
             'subtitle_locales': ['ar_SA', 'de_DE', 'en_US', 'es_ES', 'es_MX', 'fr_FR', 'it_IT', 'pt_BR'],
             'subject_name': 'Non Non Biyori Repeat',
             'episodes_count': 12,
@@ -158,9 +154,8 @@ class TestCrunchyrollCrawler:
     def test_crunchyroll_multiple_collections_all_free_w_exclusion(self, test_crunchyroll_generic, caplog):
         """Crunchyroll with multiple collections, all episodes free and discontinuous Bangumi episode IDs."""
         subject_id = 78405  # 悠哉日常大王 第1期
-        subject_url_id = 'non-non-biyori'
         args = argparse.Namespace(
-            url=self._SITE_URL_PATTERN % subject_url_id,
+            url=self._SITE_URL_PATTERN % 'non-non-biyori',
             subject=subject_id,
             episodes=verify_episode_ids_format('319289-319299,320742')[1],
             cr_collection=21335,
@@ -169,7 +164,7 @@ class TestCrunchyrollCrawler:
         test_config = {
             'subject_id': subject_id,
             'paid': 0,
-            'subject_url_id': subject_url_id,
+            'subject_url_id': 257295,
             'subtitle_locales': ['ar_SA', 'de_DE', 'en_US', 'es_ES', 'es_MX', 'fr_FR', 'it_IT', 'pt_BR'],
             'subject_name': 'Non Non Biyori',
             'episodes_count': 12,
@@ -185,9 +180,8 @@ class TestCrunchyrollCrawler:
     def test_crunchyroll_multiple_collections_all_paid_wo_exclusion(self, test_crunchyroll_generic, caplog):
         """Crunchyroll with multiple collections, all episodes paid and continuous Bangumi episode IDs."""
         subject_id = 119889  # 我老婆是学生会长 第1期
-        subject_url_id = 'my-wife-is-the-student-council-president'
         args = argparse.Namespace(
-            url=self._SITE_URL_PATTERN % subject_url_id + '?skip_wall=1',
+            url=self._SITE_URL_PATTERN % 'my-wife-is-the-student-council-president' + '?skip_wall=1',
             subject=subject_id,
             episodes=verify_episode_ids_format('533935-533946')[1],
             cr_collection=22357,
@@ -196,7 +190,7 @@ class TestCrunchyrollCrawler:
         test_config = {
             'subject_id': subject_id,
             'paid': 2,
-            'subject_url_id': subject_url_id,
+            'subject_url_id': 266769,
             'subtitle_locales': [],
             'subject_name': 'My Wife is the Student Council President (Uncensored)',
             'episodes_count': 12,
@@ -211,9 +205,8 @@ class TestCrunchyrollCrawler:
     def test_crunchyroll_multiple_collections_all_paid_w_exclusion(self, test_crunchyroll_generic, caplog):
         """Crunchyroll with multiple collections, all episodes paid and discontinuous Bangumi episode IDs."""
         subject_id = 1998  # 金属对决 战斗陀螺 第3期
-        subject_url_id = 'beyblade-metal-fusion'
         args = argparse.Namespace(
-            url=self._SITE_URL_PATTERN % subject_url_id,
+            url=self._SITE_URL_PATTERN % 'beyblade-metal-fusion',
             subject=subject_id,
             episodes=verify_episode_ids_format('22912-22916,137249-137255')[1],
             cr_collection=22595,
@@ -222,7 +215,7 @@ class TestCrunchyrollCrawler:
         test_config = {
             'subject_id': subject_id,
             'paid': 2,
-            'subject_url_id': subject_url_id,
+            'subject_url_id': 268769,
             'subtitle_locales': [],
             'subject_name': 'Beyblade: Metal Fusion Season 3',
             'episodes_count': 12,

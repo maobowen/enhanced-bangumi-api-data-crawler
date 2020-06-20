@@ -57,7 +57,7 @@ class TestBilibiliCrawler:
         assert "Episodes mismatch" not in caplog.text
 
     def test_bilibili_cn_all_free_w_exclusion(self, test_bilibili_generic, caplog):
-        """Bilibili (available in mainland China) with all episodes free and dicontinuous Bangumi episode IDs."""
+        """Bilibili (available in mainland China) with all episodes free and discontinuous Bangumi episode IDs."""
         subject_id = 51  # CLANNAD 第1期
         subject_url_id = 1177
         args = argparse.Namespace(
@@ -100,7 +100,7 @@ class TestBilibiliCrawler:
             'service_id_suffix': 'cn',
             'paid': 1,
             'subject_url_id': subject_url_id,
-            'subject_name': '辉夜大小姐想让我告白~天才们的恋爱头脑战~',
+            'subject_name': '辉夜大小姐想让我告白～天才们的恋爱头脑战～',
             'remark_suffix': '大陆',
             'episodes_count': 12,
             'test_episodes': [

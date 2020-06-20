@@ -1,3 +1,4 @@
+import cloudscraper
 import json
 import logging
 import os
@@ -62,8 +63,13 @@ class CrunchyrollCrawler(Crawler):
                     log.error('CR_ACCOUNT and CR_PASSWORD environment variables must be set for uncensored series.')
 
             # Initiate HTTP request to get series
-            response2 = requests.get(url=args.url, headers=HTTP_HEADERS)
-            series_id = re.search(r'<div class="show-actions" group_id="(.*)"><\/div>', response2.content.decode()).group(1)  # https://github.com/simplymemes/crunchyroll-dl/blob/master/index.js#L586
+            scraper = cloudscraper.create_scraper(browser={
+                'browser': 'firefox',
+                'platform': 'darwin',
+                'mobile': False,
+            })
+            response2 = scraper.get(args.url)
+            series_id = re.search(r'<div class="show-actions" group_id="(.*)"><\/div>', response2.text).group(1)  # https://github.com/simplymemes/crunchyroll-dl/blob/master/index.js#L586
             # Initiate API request to get collection
             payload3 = {
                 'fields': 'collection.collection_id,collection.name,collection.season,collection.media_count',
@@ -76,75 +82,74 @@ class CrunchyrollCrawler(Crawler):
             if not collections_data['error'] and len(collections_data['data']):
                 collection = None
                 if len(collections_data['data']) > 1:
-                    if args.cr_collection is not None:
+                    if hasattr(args, 'cr_collection') and args.cr_collection is not None:
                         for c in collections_data['data']:
                             if int(c['collection_id']) == args.cr_collection:
                                 collection = c
                                 break
-                    else:
-                        error_message = 'Multiple seasons detected. Available collections:\n\n'
+                    if collection is None:
+                        error_message = 'The season specified was not found, or multiple seasons were detected but none was specified. Available seasons:\n\n'
                         for c in collections_data['data']:
                             error_message += '\tID: %s\tName: %s\tSeason: %s\n' % (c['collection_id'], c['name'], c['season'])
-                        error_message += '\nUse --cr-collection flag to specify a collection ID. Visit %s for more information.' % response3.url
+                        error_message += '\nUse --cr-collection flag to specify a valid collection ID. Visit %s for more information.' % response3.url
                         log.error(error_message)
+                        return output_source, output_episodes
                 else:
                     collection = collections_data['data'][0]
-                if collection:
-                    # Initiate API request to get media
-                    payload4 = {
-                        'collection_id': collection['collection_id'],
-                        'fields': 'media.media_id,media.episode_number,media.free_available',
-                        'limit': 5000,
-                        'offset': 0,
-                        'session_id': session_id,
-                        'sort': 'asc',
-                    }
-                    response4 = requests.get(url=self._MEDIA_API_URL, headers=HTTP_HEADERS, params=payload4)
-                    media_data = response4.json()
-                    if not media_data['error'] and len(media_data['data']):
-                        # Reset counters
-                        count = 0
-                        free_count = 0
-                        first_episode = None
-                        for episode in media_data['data']:
-                            if episode['episode_number'] and episode['episode_number'] != '':
-                                if not first_episode:
-                                    first_episode = episode
-                                # Gather episode information
-                                episode_id = get_episode_id(count, args.episodes)
-                                # Build episode record
-                                output_episodes.append(Episode(
-                                    subject_id=args.subject,
-                                    episode_id=episode_id,
-                                    service_id=SITE_SERVICE_ID[self._CRAWLER_ID],
-                                    episode_url_id=episode['media_id'],
-                                    remark='EP%s-Crunchyroll' % episode['episode_number'],
-                                ))
-                                # Update counters
-                                count += 1
-                                if episode['free_available']:
-                                    free_count += 1
-                        # Check consistency of the number of episodes
-                        if count != len(args.episodes):
-                            log.warning('Episodes mismatch')
-                        # Gather subject information
-                        paid = get_paid_status(count, free_count)
-                        subject_url_id = re.search(SITE_URL_PATTERN[self._CRAWLER_ID], args.url).group(1)
-                        response5 = requests.get(url=self._MEDIA_URL % first_episode['media_id'], headers=HTTP_HEADERS)
-                        vilos_config_media = json.loads(re.search(r'vilos\.config\.media\s*=\s*(\{.*\})', response5.content.decode()).group(1))
-                        locales = []
-                        for stream in vilos_config_media['streams']:
-                            if stream['format'] == 'multitrack_adaptive_hls_v2' and stream['hardsub_lang']:
-                                locales.append(self.process_locale_string(stream['hardsub_lang']))
-                        # Build source record
-                        output_source = Source(
-                            subject_id=args.subject,
-                            service_id=SITE_SERVICE_ID[self._CRAWLER_ID],
-                            paid=paid,
-                            subject_url_id=subject_url_id,
-                            subtitle_locales=locales,
-                            remark='%s-Crunchyroll' % collection['name'],
-                        )
+                # Initiate API request to get media
+                payload4 = {
+                    'collection_id': collection['collection_id'],
+                    'fields': 'media.media_id,media.episode_number,media.free_available',
+                    'limit': 5000,
+                    'offset': 0,
+                    'session_id': session_id,
+                    'sort': 'asc',
+                }
+                response4 = requests.get(url=self._MEDIA_API_URL, headers=HTTP_HEADERS, params=payload4)
+                media_data = response4.json()
+                if not media_data['error'] and len(media_data['data']):
+                    # Reset counters
+                    count = 0
+                    free_count = 0
+                    first_episode = None
+                    for episode in media_data['data']:
+                        if episode['episode_number'] and episode['episode_number'] != '':
+                            if not first_episode:
+                                first_episode = episode
+                            # Gather episode information
+                            episode_id = get_episode_id(count, args.episodes)
+                            # Build episode record
+                            output_episodes.append(Episode(
+                                subject_id=args.subject,
+                                episode_id=episode_id,
+                                service_id=SITE_SERVICE_ID[self._CRAWLER_ID],
+                                episode_url_id=episode['media_id'],
+                                remark='EP%s-Crunchyroll' % episode['episode_number'],
+                            ))
+                            # Update counters
+                            count += 1
+                            if episode['free_available']:
+                                free_count += 1
+                    # Check consistency of the number of episodes
+                    if count != len(args.episodes):
+                        log.warning('Episodes mismatch')
+                    # Gather subject information
+                    paid = get_paid_status(count, free_count)
+                    response5 = scraper.get(self._MEDIA_URL % first_episode['media_id'])
+                    vilos_config_media = json.loads(re.search(r'vilos\.config\.media\s*=\s*(\{.*\})', response5.content.decode()).group(1))
+                    locales = []
+                    for stream in vilos_config_media['streams']:
+                        if stream['format'] == 'multitrack_adaptive_hls_v2' and stream['hardsub_lang']:
+                            locales.append(self.process_locale_string(stream['hardsub_lang']))
+                    # Build source record
+                    output_source = Source(
+                        subject_id=args.subject,
+                        service_id=SITE_SERVICE_ID[self._CRAWLER_ID],
+                        paid=paid,
+                        subject_url_id=series_id,
+                        subtitle_locales=locales,
+                        remark='%s-Crunchyroll' % collection['name'],
+                    )
         except (KeyError, ValueError):
             print(traceback.format_exc())
         return output_source, output_episodes

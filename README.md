@@ -10,9 +10,12 @@ This is a crawler which crawls anime data from various streaming websites and ge
 - [AcFun](https://www.acfun.cn)
 - [哔哩哔哩](https://www.bilibili.com)
 - [Crunchyroll](https://www.crunchyroll.com)
+- [Funimation](https://www.funimation.com)
 - [巴哈姆特動畫瘋](https://ani.gamer.com.tw)
 - [爱奇艺](https://www.iqiyi.com)
+- [乐视视频](https://www.le.com)
 - [ニコニコ動画](https://www.nicovideo.jp)
+- [PP视频](https://www.pptv.com)
 - [腾讯视频](https://v.qq.com)
 - [Viu](http://www.viu.com)
 - [优酷](https://www.youku.com)
@@ -33,6 +36,8 @@ This crawler requires the following arguments. Taking Non Non Biyori Season 1 as
   - A list of episode IDs on Bangumi. The sequence of IDs must match the sequence of episodes listing on the streaming website, and the IDs must be provided in the format of page ranges (see the definition [here](https://www.geeksforgeeks.org/python-convert-string-ranges-to-list/)). For example, `319289-319299,320742` means that [episode 1 on Crunchyroll](https://www.crunchyroll.com/media-645563) has [episode ID 319289 on Bangumi](https://bgm.tv/ep/319289), [episode 11](https://www.crunchyroll.com/media-645583) has [episode ID 319299](https://bgm.tv/ep/319299), and [episode 12](https://www.crunchyroll.com/media-645585) has [episode ID 320742](https://bgm.tv/ep/320742). You may also skip some episodes which are listed on the streaming website but not on Bangumi by having two consecutive commas like `705488-705491,,705492-705494`.
 - Crunchyroll collection ID (optional; flag `--cr-collection`)
   - Collection ID on Crunchyroll. This argument is only required when a Crunchyroll series has multiple collections (multiple seasons or dubbed version). For example, season 1 of Non Non Biyori has collection ID 21335, so you must provide `--cr-collection 21335` in order to crawl data for that particular season. If you do not specify this argument but multiple collections exists in the series, the crawler will print all available collections and stop. You can apply this trick to find out what collection ID to use.
+- Funimation season ID (optional; flag `--funi-season`)
+  - Season ID on Funimation. This argument is only required when a Funimation series has multiple seasons, similar to the Crunchyroll collection ID. Also similarly, if you do not specify this argument but multiple seasons exists, the crawler will print all available seasons and stop.
 
 With all the arguments prepared, the crawler can be run in two modes **outside** of the root directory:
 
@@ -52,6 +57,10 @@ export CR_ACCOUNT=<account>
 export CR_PASSWORD=<password>
 ```
 
+### Funimation
+
+Due to the limitation that there is no good solution to bypass Incapsula bot detection, crawling animes from Funimation needs some extra manual work. On the anime series page, you need to use your browser's inspector and search for `TITLE_DATA` to get the series ID. Then you need to construct the URL which contains that ID, for example, <https://www.funimation.com/shows/594522/>. URLs like <https://www.funimation.com/shows/sword-art-online/> are not accepted at the moment.
+
 ## References
 
 All references can be found in the source code. Special thanks to the following open-source projects:
@@ -60,7 +69,8 @@ All references can be found in the source code. Special thanks to the following 
 - [CrunchyrollDownloaderPy](https://github.com/ThePBone/CrunchyrollDownloaderPy), [Crunchyroll API Wiki](https://github.com/CloudMax94/crunchyroll-api/wiki) and [CR-Unblocker Server](https://github.com/onestay/CR-Unblocker-Server): Crunchyroll APIs
 - [Tencent Video Spider](https://github.com/ljm9104/tencent_video_spider): Tencent Video APIs
 - [ViuTV API](https://github.com/ljm9104/tencent_video_spider): Viu APIs
-- [youtube-dl](http://github.com/ytdl-org/youtube-dl): Extracting data from websites
+- [WeVideo](https://github.com/afirez/WeVideo): LeTV APIs
+- [youtube-dl](http://github.com/ytdl-org/youtube-dl): Some APIs and extracting data from websites
 
 ---
 

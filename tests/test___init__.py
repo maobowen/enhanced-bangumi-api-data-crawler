@@ -73,17 +73,31 @@ class TestInit:
         assert '120925,bilibili.com_cn,0,2572,zh_CN,Charlotte-B站大陆' in captured.out
         assert re.search(r'120925,541642,bilibili\.com_cn,(?:BV[0-9A-Za-z]{10}),,EP1-B站大陆', captured.out)
 
-    def test_crawl_crunchyroll(self, capsys):
+    def test_crawl_crunchyroll(self, capsys, mocker):
         """Crawl series on Crunchyroll."""
         args = argparse.Namespace(
             url='https://www.crunchyroll.com/charlotte',  # Charlotte
             subject=120925,
             episodes=verify_episode_ids_format('541642-541653,545598')[1],
         )
+        mocker.patch('src.add_optional_args', return_value=None)
         crawl(args)
         captured = capsys.readouterr()
-        assert '120925,crunchyroll.com,0,charlotte,en_US:es_MX:pt_BR,Charlotte-Crunchyroll' in captured.out
+        assert '120925,crunchyroll.com,0,266763,en_US:es_MX:pt_BR,Charlotte-Crunchyroll' in captured.out
         assert re.search(r'120925,541642,crunchyroll\.com,(?:\d+),,EP1-Crunchyroll', captured.out)
+
+    def test_crawl_funimation(self, capsys, mocker):
+        """Crawl series on Funimation."""
+        args = argparse.Namespace(
+            url='https://www.funimation.com/shows/1044413/',  # Charlotte
+            subject=120925,
+            episodes=verify_episode_ids_format('541642-541653,545598')[1],
+        )
+        mocker.patch('src.add_optional_args', return_value=None)
+        crawl(args)
+        captured = capsys.readouterr()
+        assert '120925,funimation.com,2,charlotte,en_US,Charlotte-Funimation' in captured.out
+        assert re.search(r'120925,541642,funimation\.com,(?:[\w|\-]+),,EP1-Funimation', captured.out)
 
     def test_crawl_iqiyi(self, capsys):
         """Crawl series on iQIYI."""
@@ -97,6 +111,18 @@ class TestInit:
         assert '120925,iqiyi.com,0,a_19rrhb5qhd,zh_CN,Charlotte-爱奇艺' in captured.out
         assert re.search(r'120925,541642,iqiyi\.com,(?:v_[0-9a-z]{10}),,EP1-爱奇艺', captured.out)
 
+    def test_crawl_letv(self, capsys):
+        """Crawl series on LeTV."""
+        args = argparse.Namespace(
+            url='https://www.le.com/comic/10010346.html',  # Charlotte
+            subject=120925,
+            episodes=verify_episode_ids_format('541642-541653,545598,564743')[1],
+        )
+        crawl(args)
+        captured = capsys.readouterr()
+        assert '120925,le.com,0,10010346,zh_CN,夏洛特Charlotte-乐视视频' in captured.out
+        assert re.search(r'120925,541642,le\.com,(?:\d+),,EP1-乐视视频', captured.out)
+
     def test_crawl_niconico(self, capsys):
         """Crawl series on Niconico."""
         args = argparse.Namespace(
@@ -108,6 +134,18 @@ class TestInit:
         captured = capsys.readouterr()
         assert '120925,nicovideo.jp,1,2610619,ja_JP,TVアニメ「Charlotte(シャーロット)」-niconico' in captured.out
         assert re.search(r'120925,541642,nicovideo\.jp,(?:\d+),,EP一-niconico', captured.out)
+
+    def test_crawl_pptv(self, capsys):
+        """Crawl series on PPTV."""
+        args = argparse.Namespace(
+            url='https://v.pptv.com/page/OQicpZ881peNGxCw.html',  # Charlotte
+            subject=120925,
+            episodes=verify_episode_ids_format('541642-541653,545598')[1],
+        )
+        crawl(args)
+        captured = capsys.readouterr()
+        assert '120925,pptv.com,0,OQicpZ881peNGxCw,zh_CN,Charlotte夏洛特-PP视频' in captured.out
+        assert re.search(r'120925,541642,pptv\.com,(?:\w+),,EP1-PP视频', captured.out)
 
     def test_crawl_qq(self, capsys):
         """Crawl series on Tencent Video."""

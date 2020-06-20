@@ -60,7 +60,7 @@ class AcFunCrawler(Crawler):
                     paid=0,
                     subject_url_id=album_id,
                     subtitle_locales=['zh_CN'],
-                    remark='<名称>-A站'
+                    remark='<名称>-A站',
                 )
         except (KeyError, ValueError):
             print(traceback.format_exc())
