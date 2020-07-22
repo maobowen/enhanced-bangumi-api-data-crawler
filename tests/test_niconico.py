@@ -78,24 +78,26 @@ class TestNiconicoCrawler:
 
     def test_niconico_first_free_w_exclusion(self, test_niconico_generic, caplog):
         """Niconico with only the first episode free and discontinuous Bangumi episode IDs."""
-        subject_id = 279457  # 刀剑神域 第3期第2部
-        subject_url_id = 2642735
+        subject_id = 225604  # 刀剑神域 第3期第1部
+        subject_url_id = 2638983
         args = argparse.Namespace(
             url=self._SITE_URL_PATTERN % subject_url_id,
             subject=subject_id,
-            episodes=verify_episode_ids_format('906496,905519-905530')[1],
+            episodes=verify_episode_ids_format('826916-826935,833389-833392,864801')[1],
         )
         source, episodes = self._crawler.crawl(args)
         test_config = {
             'subject_id': subject_id,
             'paid': 1,
             'subject_url_id': subject_url_id,
-            'subject_name': 'ソードアート・オンライン アリシゼーション War of Underworld',
-            'episodes_count': 13,
+            'subject_name': 'ソードアート・オンライン アリシゼーション',
+            'episodes_count': 25,
             'test_episodes': [
-                {'index': 0, 'episode_id': 906496, 'episode_number': '(?:.*)', 'is_remark_regex': True},
-                {'index': 1, 'episode_id': 905519, 'episode_number': '01'},
-                {'index': 12, 'episode_id': 905530, 'episode_number': '12'},
+                {'index': 0, 'episode_id': 826916, 'episode_number': '1'},
+                {'index': 19, 'episode_id': 826935, 'episode_number': '19'},
+                {'index': 20, 'episode_id': 833389, 'episode_number': '20'},
+                {'index': 23, 'episode_id': 833392, 'episode_number': '23'},
+                {'index': 24, 'episode_id': 864801, 'episode_number': '24'},
             ],
         }
         test_niconico_generic(source, episodes, test_config)

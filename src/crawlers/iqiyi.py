@@ -50,7 +50,8 @@ class IqiyiCrawler(Crawler):
                         # Gather episode information
                         episode_id = get_episode_id(count, args.episodes)
                         episode_url_id = re.search(r'https?://(?:www\.)?iqiyi\.com\/(v_\w+)\.html', episode['vurl']).group(1)
-                        episode_name = episode['vn'].split(subject_name)[1]
+                        vns = episode['vn'].split(subject_name)
+                        episode_name = vns[1] if len(vns) > 1 else vns[0]
                         match = re.search(r'第(\d+(?:\.\d+)?)', episode_name)
                         episode_index = match.group(1) if match else episode_name
                         # Build episode record
