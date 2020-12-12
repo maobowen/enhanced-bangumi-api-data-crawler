@@ -38,6 +38,10 @@ class IqiyiCrawler(Crawler):
             response1 = requests.get(url=args.url, headers=HTTP_HEADERS)
             album_id = re.search(r'album-?(?:I|i)d\s*(?::|=)\s*"?(\d+)"?', response1.text).group(1)  # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/iqiyi.py#L315
             response2 = requests.get(url=self._API_URL % album_id, headers=HTTP_HEADERS)
+            retries = 0
+            while re.search(r'var\stvInfoJs=(.*)', response2.text).group(1) == '' and retries < MAX_RETRIES:
+                retries += 1
+                response2 = requests.get(url=self._API_URL % album_id, headers=HTTP_HEADERS)
             data = json.loads(re.search(r'var\stvInfoJs=(.*)', response2.text).group(1))
             if data['code'] == 'A00000':
                 # Gather subject information

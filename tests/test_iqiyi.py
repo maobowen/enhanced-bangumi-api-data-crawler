@@ -32,12 +32,12 @@ class TestIqiyiCrawler:
 
     def test_iqiyi_cn_all_free_wo_exclusion(self, test_iqiyi_generic, caplog):
         """iQiyi (mainland China site) with all episodes free and continuous Bangumi episode IDs."""
-        subject_id = 260619  # 暗黑破坏神在身边
-        subject_url_id = 'a_19rrhy0utp'
+        subject_id = 259790  # 放学后桌游俱乐部
+        subject_url_id = 'a_19rrhyyont'
         args = argparse.Namespace(
             url=self._SITE_URL_PATTERN % ('www', subject_url_id),
             subject=subject_id,
-            episodes=verify_episode_ids_format('925567-925578')[1],
+            episodes=verify_episode_ids_format('906553-906564')[1],
         )
         source, episodes = self._crawler.crawl(args)
         test_config = {
@@ -46,12 +46,12 @@ class TestIqiyiCrawler:
             'paid': 0,
             'subject_url_id': subject_url_id,
             'locale_suffix': 'CN',
-            'subject_name': '暗黑破坏神在身边',
+            'subject_name': '放学后桌游俱乐部',
             'remark_suffix': '爱奇艺',
             'episodes_count': 12,
             'test_episodes': [
-                {'index': 0, 'episode_id': 925567, 'episode_number': '1'},
-                {'index': 11, 'episode_id': 925578, 'episode_number': '12'},
+                {'index': 0, 'episode_id': 906553, 'episode_number': '1'},
+                {'index': 11, 'episode_id': 906564, 'episode_number': '12'},
             ],
         }
         test_iqiyi_generic(source, episodes, test_config)

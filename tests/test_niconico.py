@@ -7,7 +7,7 @@ from src.crawlers.niconico import NiconicoCrawler
 
 class TestNiconicoCrawler:
     """Niconico crawler test suite."""
-    _SITE_URL_PATTERN = 'https://ch.nicovideo.jp/channel/ch%d'
+    _SITE_URL_PATTERN = 'https://ch.nicovideo.jp/ch%d'
     _crawler = NiconicoCrawler()
 
     @staticmethod
@@ -20,7 +20,7 @@ class TestNiconicoCrawler:
             test_config['subtitle_locales'] = ['ja_JP']
             test_config['remark'] = '%s-niconico' % test_config['subject_name']
             del test_config['subject_name']
-            test_config['episode_url_id_pattern'] = r'^(?:\d+)$'
+            test_config['episode_url_id_pattern'] = r'^(?:(?:[a-z]{2})?\d+)$'
             for test_episode_item in test_config['test_episodes']:
                 test_episode_item['remark'] = 'EP%s-niconico' % test_episode_item['episode_number']
                 del test_episode_item['episode_number']

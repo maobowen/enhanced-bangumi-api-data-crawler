@@ -64,7 +64,7 @@ class TestQQVideoCrawler:
         test_config = {
             'subject_id': subject_id,
             'subject_url_id': subject_url_id,
-            'subject_name': 'Charlotte',
+            'subject_name': 'Charlotte夏洛特',
             'episodes_count': 13,
             'test_episodes': [
                 {'index': 0, 'episode_id': 541642, 'episode_number': '1'},

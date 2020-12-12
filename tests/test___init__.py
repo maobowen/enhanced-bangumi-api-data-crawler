@@ -1,4 +1,6 @@
 import argparse
+import os
+import pytest
 import re
 
 from src import crawl, verify_episode_ids_format
@@ -123,17 +125,32 @@ class TestInit:
         assert '120925,le.com,0,10010346,zh_CN,夏洛特Charlotte-乐视视频' in captured.out
         assert re.search(r'120925,541642,le\.com,(?:\d+),,EP1-乐视视频', captured.out)
 
+    @pytest.mark.skipif('TRAVIS' in os.environ and os.environ['TRAVIS'] == 'true',
+                        reason='Skipping this test on Travis CI.')
+    def test_crawl_netflix(self, capsys, mocker):
+        """Crawl series on Netflix."""
+        args = argparse.Namespace(
+            url='https://www.netflix.com/title/70302572',  # 魔法少女小圆
+            subject=9717,
+            episodes=verify_episode_ids_format('62733-62743,74137')[1],
+        )
+        mocker.patch('src.add_optional_args', return_value=None)
+        crawl(args)
+        captured = capsys.readouterr()
+        assert '9717,netflix.com,2,70302572,en_US,Puella Magi Madoka Magica-Netflix' in captured.out
+        assert re.search(r'9717,62733,netflix\.com,(?:\d+),,EP1-Netflix', captured.out)
+
     def test_crawl_niconico(self, capsys):
         """Crawl series on Niconico."""
         args = argparse.Namespace(
-            url='http://ch.nicovideo.jp/channel/ch2610619',  # Charlotte
+            url='http://ch.nicovideo.jp/ch2610619',  # Charlotte
             subject=120925,
             episodes=verify_episode_ids_format('541642-541653,545598')[1],
         )
         crawl(args)
         captured = capsys.readouterr()
         assert '120925,nicovideo.jp,1,2610619,ja_JP,TVアニメ「Charlotte(シャーロット)」-niconico' in captured.out
-        assert re.search(r'120925,541642,nicovideo\.jp,(?:\d+),,EP一-niconico', captured.out)
+        assert re.search(r'120925,541642,nicovideo\.jp,(?:(?:[a-z]{2})?\d+),,EP一-niconico', captured.out)
 
     def test_crawl_pptv(self, capsys):
         """Crawl series on PPTV."""
@@ -156,7 +173,7 @@ class TestInit:
         )
         crawl(args)
         captured = capsys.readouterr()
-        assert '120925,v.qq.com,-1,keh8jx4nea7e5w0,zh_CN,Charlotte-腾讯视频' in captured.out
+        assert '120925,v.qq.com,-1,keh8jx4nea7e5w0,zh_CN,Charlotte夏洛特-腾讯视频' in captured.out
         assert re.search(r'120925,541642,v\.qq\.com,(?:[a-z0-9]+),,EP1-腾讯视频', captured.out)
 
     def test_crawl_viu(self, capsys):

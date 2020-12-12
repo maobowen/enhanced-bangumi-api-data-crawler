@@ -69,7 +69,7 @@ class CrunchyrollCrawler(Crawler):
                 'mobile': False,
             })
             response2 = scraper.get(args.url)
-            series_id = re.search(r'<div class="show-actions" group_id="(.*)"><\/div>', response2.text).group(1)  # https://github.com/simplymemes/crunchyroll-dl/blob/master/index.js#L586
+            series_id = re.search(r'<div class="show-actions" group_id="(.*)"', response2.text).group(1)  # https://github.com/simplymemes/crunchyroll-dl/blob/master/index.js#L586
             # Initiate API request to get collection
             payload3 = {
                 'fields': 'collection.collection_id,collection.name,collection.season,collection.media_count',

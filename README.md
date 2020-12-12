@@ -14,6 +14,7 @@ This is a crawler which crawls anime data from various streaming websites and ge
 - [巴哈姆特動畫瘋](https://ani.gamer.com.tw)
 - [爱奇艺](https://www.iqiyi.com)
 - [乐视视频](https://www.le.com)
+- [Netflix](https://www.netflix.com)
 - [ニコニコ動画](https://www.nicovideo.jp)
 - [PP视频](https://www.pptv.com)
 - [腾讯视频](https://v.qq.com)
@@ -37,7 +38,9 @@ This crawler requires the following arguments. Taking Non Non Biyori Season 1 as
 - Crunchyroll collection ID (optional; flag `--cr-collection`)
   - Collection ID on Crunchyroll. This argument is only required when a Crunchyroll series has multiple collections (multiple seasons or dubbed version). For example, season 1 of Non Non Biyori has collection ID 21335, so you must provide `--cr-collection 21335` in order to crawl data for that particular season. If you do not specify this argument but multiple collections exists in the series, the crawler will print all available collections and stop. You can apply this trick to find out what collection ID to use.
 - Funimation season ID (optional; flag `--funi-season`)
-  - Season ID on Funimation. This argument is only required when a Funimation series has multiple seasons, similar to the Crunchyroll collection ID. Also similarly, if you do not specify this argument but multiple seasons exists, the crawler will print all available seasons and stop.
+  - Season ID on Funimation, similar to the Crunchyroll collection ID.
+- Netflix season ID (optional; flag `--nflx_season`)
+  - Season ID on Netflix, similar to the Crunchyroll collection ID.
 
 With all the arguments prepared, the crawler can be run in two modes **outside** of the root directory:
 

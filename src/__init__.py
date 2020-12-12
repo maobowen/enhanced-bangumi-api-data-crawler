@@ -11,6 +11,7 @@ from .crawlers.interfaces import Crawler
 from .crawlers.iqiyi import IqiyiCrawler
 from .crawlers.letv import LeTVCrawler
 from .crawlers.niconico import NiconicoCrawler
+from .crawlers.netflix import NetflixCrawler
 from .crawlers.pptv import PPTVCrawler
 from .crawlers.qq import QQVideoCrawler
 from .crawlers.viu import ViuCrawler
@@ -56,6 +57,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('-e', '--episodes', help='episode IDs on bangumi.tv', metavar='EPISODE_IDS', type=str)
     parser.add_argument('--cr-collection', help='Crunchyroll collection ID', metavar='COLLECTION_ID', type=int)
     parser.add_argument('--funi-season', help='Funimation season ID', metavar='SEASON_ID', type=int)
+    parser.add_argument('--nflx-season', help='Netflix season ID', metavar='SEASON_ID', type=int)
     args = parser.parse_args()
     while args.url is None:
         url = input("Subject URL: ")
@@ -90,6 +92,10 @@ def add_optional_args(crawler: Crawler, args: argparse.Namespace):
         funi_season = input("Funimation season ID (press ENTER for null): ")
         if funi_season:
             args.funi_season = int(funi_season)
+    elif isinstance(crawler, NetflixCrawler) and args.nflx_season is None:
+        nflx_season = input("Netflix season ID (press ENTER for null): ")
+        if nflx_season:
+            args.nflx_season = int(nflx_season)
 
 
 def crawl(args: argparse.Namespace):
@@ -106,6 +112,7 @@ def crawl(args: argparse.Namespace):
         'funimation':  FunimationCrawler,
         'iqiyi':       IqiyiCrawler,
         'letv':        LeTVCrawler,
+        'netflix':     NetflixCrawler,
         'niconico':    NiconicoCrawler,
         'pptv':        PPTVCrawler,
         'qq':          QQVideoCrawler,
