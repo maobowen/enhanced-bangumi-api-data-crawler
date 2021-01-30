@@ -64,6 +64,19 @@ export CR_PASSWORD=<password>
 
 Due to the limitation that there is no good solution to bypass Incapsula bot detection, crawling animes from Funimation needs some extra manual work. On the anime series page, you need to use your browser's inspector and search for `TITLE_DATA` to get the series ID. Then you need to construct the URL which contains that ID, for example, <https://www.funimation.com/shows/594522/>. URLs like <https://www.funimation.com/shows/sword-art-online/> are not accepted at the moment.
 
+### iQIYI (爱奇艺)
+
+Due to geo restrictions, crawling animes from iQIYI only works with a Chinese IP address.
+
+You can build a simple proxy service on [Alibaba Cloud Function Compute](https://www.aliyun.com/product/fc), [Tencent Cloud Serverless Cloud Function](https://cloud.tencent.com/product/scf), etc. and set the following environment variable before running the crawler if you are not in mainland China:
+
+```sh
+export CN_PROXY=<proxy-url>
+# Example of proxy-url: https://xxx.cn-shanghai.fc.aliyuncs.com/2016-08-15/proxy/proxy/proxy/?url=%s
+```
+
+This proxy service should take an encoded iQIYI API URL as the input, make requests to the API and return the response to the crawler. You can customize your proxy service's query string or URL format, but make sure to have exactly one `%s` in the proxy service's URL so that the crawler can correctly work.
+
 ## References
 
 All references can be found in the source code. Special thanks to the following open-source projects:

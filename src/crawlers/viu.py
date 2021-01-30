@@ -14,6 +14,9 @@ log = logging.getLogger(__name__)
 
 class ViuCrawler(Crawler):
     """Viu Crawler."""
+    _AREA_ID = {
+        'hk': 1,
+    }
     _API_URL = 'https://www.viu.com/ott/%s/index.php'  # https://github.com/hklcf/ViuTV-API/blob/master/ott/API#L3
     _CRAWLER_ID = 'viu'
 
@@ -29,6 +32,7 @@ class ViuCrawler(Crawler):
         try:
             country_code, video_id = re.search(SITE_URL_PATTERN[self._CRAWLER_ID], args.url).groups()
             payload = {
+                'area_id': self._AREA_ID.get(country_code, 1),
                 'r': 'vod/ajax-detail',
                 'platform_flag_label': 'web',
                 'product_id': video_id,

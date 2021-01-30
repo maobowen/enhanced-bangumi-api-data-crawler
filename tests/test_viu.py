@@ -56,12 +56,12 @@ class TestViuCrawler:
 
     def test_viu_hk_w_exclusion(self, test_viu_generic, caplog):
         """Viu (Hong Kong) with discontinuous Bangumi episode IDs."""
-        subject_id = 218708  # 比宇宙更远的地方
-        subject_url_id = 71929
+        subject_id = 240038  # 青春猪头少年不会梦到兔女郎学姐
+        subject_url_id = 120854
         args = argparse.Namespace(
             url=self._SITE_URL_PATTERN % ('hk', 'zh-hk', subject_url_id),
             subject=subject_id,
-            episodes=verify_episode_ids_format('766525-766536,769893')[1],
+            episodes=verify_episode_ids_format('831366-831377,834292')[1],
         )
         source, episodes = self._crawler.crawl(args)
         test_config = {
@@ -70,12 +70,12 @@ class TestViuCrawler:
             'paid': 0,
             'subject_url_id': subject_url_id,
             'subtitle_locales': ['zh_HK'],
-            'subject_name': '比宇宙更遠的地方',
+            'subject_name': '青春豬頭少年不會夢到兔女郎學姐',
             'episodes_count': 13,
             'test_episodes': [
-                {'index': 0, 'episode_id': 766525, 'episode_number': '1'},
-                {'index': 11, 'episode_id': 766536, 'episode_number': '12'},
-                {'index': 12, 'episode_id': 769893, 'episode_number': '13'},
+                {'index': 0, 'episode_id': 831366, 'episode_number': '1'},
+                {'index': 11, 'episode_id': 831377, 'episode_number': '12'},
+                {'index': 12, 'episode_id': 834292, 'episode_number': '13'},
             ],
         }
         test_viu_generic(source, episodes, test_config)

@@ -2,7 +2,6 @@ HTTP_HEADERS = {
     'Accept-Language': '*',
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0',
 }
-MAX_RETRIES = 10
 SITE_SERVICE_ID = {
     'acfun':       'acfun.cn',
     'animad':      'ani.gamer.com.tw',

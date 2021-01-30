@@ -1,8 +1,10 @@
 import json
 import logging
+import os
 import re
 import requests
 import traceback
+import urllib.parse
 
 from .common import *
 from .interfaces import Crawler
@@ -16,7 +18,9 @@ log = logging.getLogger(__name__)
 class IqiyiCrawler(Crawler):
     """iQIYI Crawler."""
     _API_URL = 'http://cache.video.qiyi.com/jp/avlist/%s/1/50/'  # https://github.com/bangumi-data/helper/blob/master/lib/crawlers/iqiyi.js#L81
+    _CN_PROXY_ENV_VAR_KEY = 'CN_PROXY'
     _CRAWLER_ID = 'iqiyi'
+    _GEO_CHECK_API_URL = 'http://ipservice.163.com/isFromMainland'
 
     def crawl(self, args) -> tuple:
         """Crawl series on iQIYI.
@@ -28,6 +32,15 @@ class IqiyiCrawler(Crawler):
         output_episodes = []
         output_source = None
         try:
+            # Geo Check
+            use_proxy = False
+            geo_check_response = requests.get(url=self._GEO_CHECK_API_URL)
+            if 'true' not in geo_check_response.text:
+                if not os.getenv(self._CN_PROXY_ENV_VAR_KEY):
+                    log.error('You must have a Chinese IP address. Use %s environment variable to set a proxy API.' % self._CN_PROXY_ENV_VAR_KEY)
+                    return output_source, output_episodes
+                else:
+                    use_proxy = True
             # Gather information
             is_tw = 'tw.iqiyi' in args.url
             service_id_prefix = 'tw.' if is_tw else ''
@@ -37,11 +50,10 @@ class IqiyiCrawler(Crawler):
             # Initiate API requests
             response1 = requests.get(url=args.url, headers=HTTP_HEADERS)
             album_id = re.search(r'album-?(?:I|i)d\s*(?::|=)\s*"?(\d+)"?', response1.text).group(1)  # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/iqiyi.py#L315
-            response2 = requests.get(url=self._API_URL % album_id, headers=HTTP_HEADERS)
-            retries = 0
-            while re.search(r'var\stvInfoJs=(.*)', response2.text).group(1) == '' and retries < MAX_RETRIES:
-                retries += 1
-                response2 = requests.get(url=self._API_URL % album_id, headers=HTTP_HEADERS)
+            api_url = self._API_URL % album_id
+            if use_proxy:
+                api_url = os.getenv(self._CN_PROXY_ENV_VAR_KEY) % urllib.parse.quote(string=api_url, safe='')
+            response2 = requests.get(url=api_url, headers=HTTP_HEADERS)
             data = json.loads(re.search(r'var\stvInfoJs=(.*)', response2.text).group(1))
             if data['code'] == 'A00000':
                 # Gather subject information

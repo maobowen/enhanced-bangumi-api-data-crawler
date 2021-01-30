@@ -167,12 +167,12 @@ class TestBilibiliCrawler:
 
     def test_bilibili_cn_all_paid_w_exclusion(self, test_bilibili_generic, caplog):
         """Bilibili (available in mainland China) with all episodes paid and discontinuous Bangumi episode IDs."""
-        subject_id = 278826  # Re:从零开始的异世界生活 第2期
-        subject_url_id = 28229233
+        subject_id = 140001  # Re:从零开始的异世界生活 第1期
+        subject_url_id = 3461
         args = argparse.Namespace(
             url=self._SITE_URL_PATTERN % subject_url_id,
             subject=subject_id,
-            episodes=verify_episode_ids_format('957951-957962,967250')[1],
+            episodes=verify_episode_ids_format('621357-621368,626044-626055,626353')[1],
         )
         source, episodes = self._crawler.crawl(args)
         test_config = {
@@ -180,13 +180,15 @@ class TestBilibiliCrawler:
             'service_id_suffix': 'cn',
             'paid': 2,
             'subject_url_id': subject_url_id,
-            'subject_name': 'Re：从零开始的异世界生活 第二季',
+            'subject_name': 'Re：从零开始的异世界生活',
             'remark_suffix': '大陆',
-            'episodes_count': 13,
+            'episodes_count': 25,
             'test_episodes': [
-                {'index': 0, 'episode_id': 957951, 'episode_number': '1'},
-                {'index': 11, 'episode_id': 957962, 'episode_number': '12'},
-                {'index': 12, 'episode_id': 967250, 'episode_number': '13'},
+                {'index': 0, 'episode_id': 621357, 'episode_number': '1'},
+                {'index': 11, 'episode_id': 621368, 'episode_number': '12'},
+                {'index': 12, 'episode_id': 626044, 'episode_number': '13'},
+                {'index': 23, 'episode_id': 626055, 'episode_number': '24'},
+                {'index': 24, 'episode_id': 626353, 'episode_number': '25'},
             ],
         }
         test_bilibili_generic(source, episodes, test_config)
